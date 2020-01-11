@@ -1,21 +1,22 @@
-# The concept
+# The Concept
 
-A number of companies in make use of mobile "2FA" which is inherently insecure. Most often there are no choices to change this.
-There are a number of options:
-1. Go to a better bank that has proper 2FA support via OTP or U2F or a mobile push to the app
-2. Get a burner phone and hope no one finds your number and tries to port out your number
-3. Set up proxy/facade mobile number that is a front for your mobile 2fa interaction
+A number of companies in make use of mobile "2FA" which is inherently insecure and easily bypassed by porting out of mobile numbers or sim swap attacks. 
 
-# AWS Setup 
-- An external number outside (can be anywhere), this should be more difficult to port out
-- Might have incompatibilities with services
+There are a number of options to prevent this:
+1. Go to a better Bank that has more secure 2FA support via OTP, U2F or a mobile push to the app
+2. Get a burner phone and hope no one finds your number and tries a sim attack
+3. Use this tool which sets up proxy mobile number and stack in AWS for your mobile 2FA interaction
 
-# The flow
-- You register your proxy number
-- Proxy # resides in AWS pinpoint
+# AWS Setup and Flow
+
+- Register your proxy number via AWS Pinpoint
+- Proxy number resides in AWS pinpoint
 - Messges received on AWS forwarded to SNS
 - SNS subscriptions can forward these messages securely to their destination
-- Lambda, SNS, S3, skys the limit for destinations
-- Current solution makes use of encrypted SMS, Email or Signal message to end user
+- Lambda, SNS, S3 and your choice of forwarding
+- Current solution makes use of encrypted SMS or Email other options could be Signal, Slack or Telegram
 
-Assumptions are that AWS will secure your registered number and the communication between AWS and you (the end user) is secured
+# Assumptions
+
+- AWS will secure your registered number and porting out or control of this number will not give visibility of 2FA codes
+- The communication within AWS is secure and much more difficult to break if your AWS account is secure
