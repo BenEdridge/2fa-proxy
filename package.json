@@ -1,0 +1,15 @@
+{
+  "name": "aws-2fa-proxy",
+  "version": "1.0.0",
+  "description": "The concept",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate:keys": "openssl genrsa -out ./keys/private.pem 2048 && openssl rsa -in ./keys/private.pem -pubout -out ./keys/public.pem"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "openpgp": "^4.7.2"
+  }
+}
