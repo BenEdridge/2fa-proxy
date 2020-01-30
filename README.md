@@ -7,6 +7,8 @@ There are a number of options to prevent this:
 2. Get a burner phone and hope no one finds your number and tries a sim attack
 3. Use this tool which sets up proxy mobile number and stack in AWS for your mobile 2FA interaction
 
+![AWS Infrastructure](https://github.com/BenEdridge/2fa-proxy/raw/master/struture.png "Logo Title Text 1")
+
 ## Get Started
 ```
 npm install
