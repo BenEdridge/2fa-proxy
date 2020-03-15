@@ -1,0 +1,5 @@
+# Loaded into serverless.yml as config
+
+# Endpoints for 2FA messages
+email: test@example.com
+mobile: +1234567890

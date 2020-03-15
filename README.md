@@ -24,12 +24,20 @@ npm run deploy
 
 - Register your proxy number via AWS Pinpoint
 - Proxy number resides in AWS pinpoint
-- Messges received on AWS forwarded to SNS
+- Messages received on AWS forwarded to SNS
 - SNS subscriptions can forward these messages securely to their destination
-- Lambda, SNS, S3 and your choice of forwarding
+- Lambda, SNS, S3 or your choice of forwarding!
 - Current solution makes use of encrypted SMS or Email other options could be Signal, Slack or Telegram
 
 # Assumptions
 
 - AWS will secure your registered number and porting out or control of this number will not give visibility of 2FA codes
 - The communication within AWS is secure and much more difficult to break if your AWS account is secure
+
+# Deployment
+
+- Makes use of the serverless framework however some manual setup is still required
+- Setup a AWS Pinpoint proxy number setup
+- Get AWS credentials
+- Run `AWS_PROFILE=<your-profile> npm run deploy`
+- Check output from deploy and test using your registered number

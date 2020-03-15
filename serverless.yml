@@ -1,0 +1,85 @@
+# Welcome to Serverless!
+# For full config options, check the docs:
+#    docs.serverless.com
+
+service: aws-2fa-proxy
+frameworkVersion: ">=1.1.0"
+custom: ${file(./config.yml)}
+
+provider:
+  name: aws
+  description: Proxies and encrypts SMS messages received through pinpoint
+  runtime: nodejs12.x
+  memorySize: 128
+
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'sns:Publish'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:sns:::'
+            - Ref: SnsTopic
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+package:
+  include:
+    - handler.js
+    - package.json
+    - package-lock.json
+    - node_modules
+  exclude:
+    - keys/**
+    - .nvmrc
+    - config.yml.example
+    - config.yml
+    - README.md
+    - serverless.yml
+    - structure.png
+
+functions:
+  2fa-proxy:
+    events:
+    - sns:
+      arn: !Ref SnsTopic
+    handler: handler.handle
+    environment:
+      PUBLIC_KEY: PUBLIC_KEY_FOR_ENCRYPTION
+      PHONE_NUMBER: ${self:custom.mobile}
+
+# you can add CloudFormation resource templates here
+resources:
+  Resources:
+    PinPointApp:
+      Type: AWS::Pinpoint::App
+      Properties:
+        Name: ${self:service}
+    SnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: ${self:service}
+    SmsSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: sms
+        Endpoint:  ${self:custom.mobile}
+        TopicArn: !Ref SnsTopic
+    EmailSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: ${self:custom.email}
+        TopicArn: !Ref SnsTopic
+    LambdaSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: lambda
+        Endpoint: 
+          Fn::GetAtt:
+            - 2faDashproxyLambdaFunction
+            - Arn
+        TopicArn: !Ref SnsTopic

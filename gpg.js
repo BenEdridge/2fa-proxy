@@ -25,6 +25,4 @@ const pubkey = `-----BEGIN PGP PUBLIC KEY BLOCK-----
     
 }
 
-
-
 encryptDecryptFunction(pubkey).then(res => console.log('Complete'))
