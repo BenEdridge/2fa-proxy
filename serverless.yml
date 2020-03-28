@@ -46,7 +46,7 @@ functions:
     events:
     - sns:
       arn: !Ref SnsTopic
-    handler: handler.handle
+    handler: handler.entrypoint
     environment:
       PUBLIC_KEY: PUBLIC_KEY_FOR_ENCRYPTION
       PHONE_NUMBER: ${self:custom.mobile}
