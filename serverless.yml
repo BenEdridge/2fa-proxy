@@ -43,10 +43,11 @@ package:
 
 functions:
   2fa-proxy:
+    handler: handler.entrypoint
+    # Trigger lambda for SNS topic created in this file
     events:
     - sns:
-      arn: !Ref SnsTopic
-    handler: handler.entrypoint
+        arn: !Ref SnsTopic
     environment:
       PUBLIC_KEY: PUBLIC_KEY_FOR_ENCRYPTION
       PHONE_NUMBER: ${self:custom.mobile}
