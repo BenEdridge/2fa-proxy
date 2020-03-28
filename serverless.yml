@@ -8,31 +8,33 @@ custom: ${file(./config.yml)}
 
 provider:
   name: aws
-  description: Proxies and encrypts SMS messages received through pinpoint
+  region: ap-southeast-2
+  description: Proxies and encrypts SMS messages received through Pinpoint
   runtime: nodejs12.x
-  memorySize: 128
+  memorySize: 2048
+  timeout: 10
 
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
-        - 'sns:Publish'
+        - 'sns:*'
       Resource:
-        Fn::Join:
-          - ''
-          - - 'arn:aws:sns:::'
-            - Ref: SnsTopic
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+          - Ref: ForwardingSnsTopic
+    - Effect: 'Allow'
+      Action:
+        - 'sns:*'
+      Resource:
+          - Ref: ReceivingSnsTopic
 
 package:
   include:
     - handler.js
+    - openpgp.js
     - package.json
     - package-lock.json
     - node_modules
   exclude:
+    - images/**
     - keys/**
     - .nvmrc
     - config.yml.example
@@ -45,12 +47,16 @@ functions:
   2fa-proxy:
     handler: handler.entrypoint
     # Trigger lambda for SNS topic created in this file
+    # See issues https://github.com/serverless/serverless/issues/5198
     events:
-    - sns:
-        arn: !Ref SnsTopic
+      - sns: 
+          arn: !Ref ReceivingSnsTopic
+          topicName: 2FAReceivingTopic
     environment:
-      PUBLIC_KEY: PUBLIC_KEY_FOR_ENCRYPTION
+      PUBLIC_KEY: ${self:custom.public_key}
       PHONE_NUMBER: ${self:custom.mobile}
+      EMAIL: ${self:custom.email}
+      TOPIC_ARN: ${self:resources.Outputs.OutputForwardingSNSTopic.Value}
 
 # you can add CloudFormation resource templates here
 resources:
@@ -59,22 +65,17 @@ resources:
       Type: AWS::Pinpoint::App
       Properties:
         Name: ${self:service}
-    SnsTopic:
+    # PinPoint SMS channels with short or long codes need to be manually requested via AWS console
+    PinPointSmsChannel:
+      Type: AWS::Pinpoint::SMSChannel
+      Properties: 
+        ApplicationId: !Ref PinPointApp
+        Enabled: true
+    ReceivingSnsTopic:
       Type: AWS::SNS::Topic
       Properties:
         DisplayName: ${self:service}
-    SmsSubscription:
-      Type: AWS::SNS::Subscription
-      Properties:
-        Protocol: sms
-        Endpoint:  ${self:custom.mobile}
-        TopicArn: !Ref SnsTopic
-    EmailSubscription:
-      Type: AWS::SNS::Subscription
-      Properties:
-        Protocol: email
-        Endpoint: ${self:custom.email}
-        TopicArn: !Ref SnsTopic
+        TopicName: 2FARecevingTopic
     LambdaSubscription:
       Type: AWS::SNS::Subscription
       Properties:
@@ -83,4 +84,27 @@ resources:
           Fn::GetAtt:
             - 2faDashproxyLambdaFunction
             - Arn
-        TopicArn: !Ref SnsTopic
+        TopicArn: !Ref ReceivingSnsTopic
+    ForwardingSnsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: ${self:service}
+        TopicName: 2FAForwardingTopic
+    SmsSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: sms
+        Endpoint: ${self:custom.mobile}
+        TopicArn: !Ref ForwardingSnsTopic
+    EmailSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: ${self:custom.email}
+        TopicArn: !Ref ForwardingSnsTopic
+  #https://github.com/serverless-operations/serverless-step-functions/issues/78
+  Outputs:
+    OutputForwardingSNSTopic:
+      Description: "The ARN of the forwarding SNS Topic for SMS, Email and Lambda forwarding"
+      Value:
+        Ref: ForwardingSnsTopic

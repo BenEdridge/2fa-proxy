@@ -2,4 +2,15 @@
 
 # Endpoints for 2FA messages
 email: test@example.com
-mobile: +1234567890
+mobile: "+1234567890"
+
+# Your Public Key (Remember you need a private key to decrypt this too!)
+public_key: |+
+  -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+  mQINBF5+8voBEADS/SOwGcTvi80zhE33S6iJfuJXFWv4PgFKRvIhd3N5Rc72bDeB
+  j2E0Qd/Zs7ZzoILU0IVgxisHig2o8a0oy0I0G8TOprZCLELpqlDjnreBBDLJ19
+  +ooNyrXmIUPGY3dBI6++KNt1agkOpcQrJauzpYp8uQ4FCxL1Qbn4M/iwSERV6g0m
+  JBg=
+  =D+WT
+  -----END PGP PUBLIC KEY BLOCK-----
