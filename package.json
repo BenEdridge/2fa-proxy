@@ -4,17 +4,16 @@
   "description": "The concept",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "generate:keys": "openssl genrsa -out ./keys/private.pem 2048 && openssl rsa -in ./keys/private.pem -pubout -out ./keys/public.pem",
+    "test:e2e": "serverless invoke local --function 2fa-proxy --path ./tests/event.json --type event --aws-profile $AWS_PROFILE -e TOPIC_ARN=$TOPIC_ARN",
     "deploy": "serverless deploy --aws-profile $AWS_PROFILE",
     "remove-deploy": "serverless remove --aws-profile $AWS_PROFILE"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "openpgp": "^4.7.2"
+    "openpgp": "^4.10.2"
   },
   "devDependencies": {
-    "serverless": "^1.67.0"
+    "serverless": "^1.67.3"
   }
 }

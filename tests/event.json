@@ -1,0 +1,20 @@
+{
+  "Records": [
+      {
+          "EventSource": "aws:sns",
+          "EventVersion": "1.0",
+          "Sns": {
+              "Type": "Notification",
+              "MessageId": "b00aa206-223d-5e2b-aa28-f4ff18e90ea0",
+              "Subject": null,
+              "Message": "{\"originationNumber\":\"+1234567890\",\"destinationNumber\":\"+2234567890\",\"messageKeyword\":\"keyword\",\"messageBody\":\"Your SMS message\",\"inboundMessageId\":\"535fd67c-4caa-577e-884c-8085767e5934\",\"previousPublishedMessageId\":\"null\"}",
+              "Timestamp": "2020-03-28T11:44:20.044Z",
+              "SignatureVersion": "1",
+              "Signature": "1234",
+              "SigningCertUrl": "https://sns.ap-southeast-2.amazonaws.com",
+              "UnsubscribeUrl": "https://sns.ap-southeast-2.amazonaws.com",
+              "MessageAttributes": {}
+          }
+      }
+  ]
+}
