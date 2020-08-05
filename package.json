@@ -11,9 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "openpgp": "^4.10.2"
+    "openpgp": "^4.10.7"
   },
   "devDependencies": {
-    "serverless": "^1.67.3"
+    "serverless": "^1.78.1"
   }
 }
